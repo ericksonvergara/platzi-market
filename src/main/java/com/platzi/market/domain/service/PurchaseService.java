@@ -17,7 +17,7 @@ public class PurchaseService {
         return purchaseRepository.getAll();
     }
 
-    public Optional<List<Purchase>> getByIdClient(String clientId){
+    public Optional<List<Purchase>> getByClient(String clientId){
         return purchaseRepository.getByClient(clientId);
     }
 
