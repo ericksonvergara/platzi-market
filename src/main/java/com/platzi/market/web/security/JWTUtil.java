@@ -1,5 +1,6 @@
 package com.platzi.market.web.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,5 +19,16 @@ public class JWTUtil  {
                 .signWith(SignatureAlgorithm.HS256, KEY).compact(); //Firmamos el metodo en este caso se uso el HS256
     }
 
-
+    public boolean validaToken(String token, UserDetails userDetails) { //Validamos que el jwt este valido y sea correcto
+        return userDetails.getUsername().equals(extractUsername(token)) && !isTokenExpired(token); //Verificamos si el usuario que esta llegando a la peticion es el mismo que el que viene en el token.
+    }
+    public  String extractUsername(String token){ //Extraemos el usuario del JWT
+        return getClaims(token).getSubject(); // EN el Subjet es donde esta el usuario de la peticion.
+    }
+    public boolean isTokenExpired(String token){ //Verificamos si el token ya expiro.
+        return getClaims(token).getExpiration().before(new Date());
+    }
+    private Claims getClaims(String token){ //Metodo auxliar que retorna los Claim(Objetos dentro del JWT).
+        return Jwts.parser().setSigningKey(KEY).parseClaimsJws(token).getBody();
+    }
 }
